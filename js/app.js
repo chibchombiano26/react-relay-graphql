@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import Hello from './components/Hello';
+import Hello from './components/Main';
 
 
 /*
