@@ -1,37 +1,39 @@
+import fs from 'fs';
 import express from 'express';
-import schema from './data/schema';
+import Schema from './data/schema';
 import GraphQLHTTP from 'express-graphql';
 import {graphql} from 'graphql';
+import {introspectionQuery} from 'graphql/utilities';
+
 import {MongoClient} from 'mongodb';
 
 let app = express();
-
 app.use(express.static('public'));
 
+(async () => {
+  try {
+    let db = await MongoClient.connect('mongodb://futbolitfutbolito152:iguazo26@ds039095.mongolab.com:39095/hefesoft');
+    let schema = Schema(db);
 
-
-let db;
-MongoClient.connect('mongodb://futbolitfutbolito152:iguazo26@ds039095.mongolab.com:39095/hefesoft', (error, database)=>{
-   if(error) throw error;
-   
-   db = database;
-   
-   app.use('/graphql', GraphQLHTTP({
-       schema: schema(db),
-       graphiql: true
+    app.use('/graphql', GraphQLHTTP({
+      schema,
+      graphiql: true
     }));
-   
-   
-   app.listen(process.env.PORT, process.env.IP, ()=>{
-       console.log('Server lisening');
-   });
-});
 
-app.get('/data/links', (req, res)=>{
+    let server = app.listen(process.env.PORT, process.env.IP, () => {
+      console.log(`Listening on port ${server.address().port}`);
+    });
+
+    // Generate schema.json
+    /*let json = await graphql(schema, introspectionQuery);
+    fs.writeFile('./data/schema.json', JSON.stringify(json, null, 2), err => {
+      if (err) throw err;
+
+      console.log("JSON schema created");
+    });
+    */
     
-    db.collection('links').find({}).toArray((err, links) =>{
-       if(err) throw err;
-       res.json(links);
-   });
-    
-});
+  } catch(e) {
+    console.log(e);
+  }
+})();

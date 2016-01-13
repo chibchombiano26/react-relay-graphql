@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import Hello from './components/Main';
+import Relay from 'react-relay';
 
 
 /*
@@ -14,4 +15,13 @@ let Hello = React.createClass({
 
 
 
-ReactDOM.render(<Hello />, document.getElementById('react'));
+ReactDOM.render(<Hello limit={3} />, document.getElementById('react'));
+
+console.log(
+    Relay.QL`
+    query Test{
+        links {
+            title
+        }
+    }`
+);

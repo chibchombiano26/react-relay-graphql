@@ -8,6 +8,15 @@ let _getAppState = ()=>{
 
 export default class Main extends React.Component{
     
+    //Babel stage 0
+    static propTypes ={
+        limit: React.PropTypes.number
+    };
+    
+    static defaultProps ={
+        limit: 4
+    };
+    
     constructor(props){
         super(props);
         
@@ -35,7 +44,7 @@ export default class Main extends React.Component{
     
     render(){
         
-        let content = this.state.links.map(link =>{
+        let content = this.state.links.slice(0, this.props.limit).map(link =>{
             return <li key={link._id}>
                       <a href={link.url}>{link.title}</a>
                    </li>;
